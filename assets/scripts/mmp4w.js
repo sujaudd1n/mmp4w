@@ -4,8 +4,22 @@ class MMP4W {
   constructor() {
     this.container = document.querySelector("#mmp4w_container");
     this.video = document.querySelector("#mmp4w_video");
+
     this.SEEK_TIME = 5;
+
+    this.KEY_PLAY_PAUSE = "p";
+    this.STOP = "s";
+    this.MUTE = "m";
+    this.VOLUME_UP = "k";
+    this.VOLUME_DOWN = "j";
+    this.SEEK_BEHIND = "h";
+    this.SEEK_FRONT = "l";
+    this.FULL_SCREEN = "f";
+    this.CHANGE_FIT = "o";
+    this.SHOW_INFO = "i";
+
     this.layout_index = 0;
+
     this.set_container_style();
     this.set_video_style();
     this.set_event_listener();
@@ -30,24 +44,26 @@ class MMP4W {
 
   set_event_listener() {
     document.addEventListener("keydown", (e) => {
-      if (e.key === "p") {
+      if (e.key === this.KEY_PLAY_PAUSE) {
         this.play_pause();
-      } else if (e.key === "s") {
+      } else if (e.key === this.STOP) {
         this.stop();
-      } else if (e.key === "m") {
+      } else if (e.key === this.MUTE) {
         this.mute();
-      } else if (e.key === "k") {
+      } else if (e.key === this.VOLUME_UP) {
         this.volume_up();
-      } else if (e.key === "j") {
+      } else if (e.key === this.VOLUME_DOWN) {
         this.volume_down();
-      } else if (e.key === "h") {
+      } else if (e.key === this.SEEK_BEHIND) {
         this.seek_behind();
-      } else if (e.key === "l") {
+      } else if (e.key === this.SEEK_FRONT) {
         this.seek_front();
-      } else if (e.key === "f") {
+      } else if (e.key === this.FULL_SCREEN) {
         this.full_screen();
-      } else if (e.key === "a") {
-        this.change_vide_layout();
+      } else if (e.key === this.CHANGE_FIT) {
+        this.change_fit();
+      } else if (e.key === this.SHOW_INFO) {
+        this.show_info();
       }
     });
   }
@@ -96,12 +112,20 @@ class MMP4W {
     }
   }
 
-  change_vide_layout() {
+  change_fit() {
     const layout = ["contain", "cover", "none", "scale-down"];
     this.layout_index + 1 >= layout.length
       ? (this.layout_index = 0)
       : this.layout_index++;
     this.video.style.objectFit = layout[this.layout_index];
+  }
+
+  async show_info() {
+    const para = document.createElement('p');
+    para.textContent = this.video.currentTime;
+    this.container.appendChild(para);
+    await new Promise(r => setTimeout(r, 1000))
+    para.remove()
   }
 }
 
