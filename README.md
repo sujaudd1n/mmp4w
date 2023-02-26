@@ -4,7 +4,7 @@ Minimalist media player for web.
 
 ## Documentaion
 
-- Add a script tag with ```defer``` attribute in body tag of  ```html``` document.
+- Add a script tag with ```defer``` attribute in ```head``` tag of html document.
 ```js
 <script src="https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js" defer></script>
 ```
