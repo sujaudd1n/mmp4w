@@ -17,6 +17,7 @@ class MMP4W {
     this.FULL_SCREEN = "f";
     this.CHANGE_FIT = "o";
     this.SHOW_INFO = "i";
+    this.SHOW_CONTROLS = "c";
 
     this.layout_index = 0;
 
@@ -64,8 +65,14 @@ class MMP4W {
         this.change_fit();
       } else if (e.key === this.SHOW_INFO) {
         this.show_info();
+      } else if (e.key === this.SHOW_CONTROLS) {
+        this.show_controls();
       }
     });
+  }
+
+  show_controls() {
+    this.video.controls = !this.video.controls;
   }
 
   play_pause() {
@@ -120,12 +127,49 @@ class MMP4W {
     this.video.style.objectFit = layout[this.layout_index];
   }
 
+  get_info_element() {
+    const width = this.container.offsetWidth;
+    const height = this.container.offsetHeight;
+    const box_width = (width * 10) / 100;
+    const box_height = (height * 10) / 100;
+    const blur = box_width;
+    const shadow = `inset 0 -${box_height}px #ffffff33`;
+    console.log(shadow);
+    const info = document.createElement("div");
+    info.style.boxShadow = shadow;
+    info.style.position = "absolute";
+    info.style.bottom = "0";
+    info.style.left = "0";
+    info.style.right = "0";
+    info.style.opacity = 0;
+    info.style.height = "50px";
+    info.style.transition = "opacity 100ms linear";
+    info.style.fontSize = "30px";
+    info.style.textAlign = "center";
+
+    info.textContent = `${Math.floor(
+      (this.video.currentTime / this.video.duration) * 100
+    )} %`;
+    return info;
+  }
+
   async show_info() {
-    const para = document.createElement('p');
-    para.textContent = this.video.currentTime;
-    this.container.appendChild(para);
-    await new Promise(r => setTimeout(r, 1000))
-    para.remove()
+    if (this.container.children.length >= 2) return;
+
+    const info = this.get_info_element();
+    this.container.appendChild(info);
+    info.style.opacity = 1;
+    this.video.addEventListener("timeupdate", (e) => {
+      info.textContent = `${Math.floor(
+        (this.video.currentTime / this.video.duration) * 100
+      )} %`;
+    });
+    await new Promise((r) => setTimeout(r, 2500));
+
+    info.style.opacity = 0;
+    await new Promise((r) => setTimeout(r, 100));
+
+    info.remove();
   }
 }
 
