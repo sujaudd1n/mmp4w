@@ -1,6 +1,6 @@
 # mmp4w
 
-Minimalist media player for web.
+Minimalist media player for web. Control volume, current time, play-pause easily from keyboard.
 
 ## Documentaion
 
@@ -31,6 +31,18 @@ of its parent.
 ```
 The setup is complete.
 
+### Commands
+
+- ```p``` - Play/pause the video.
+- ```s``` - Stop the video.
+- ```m``` - Mute.
+- ```k``` - Volume up.
+- ```j``` - Volume down.
+- ```h``` - Seek behind.
+- ```f``` - Fullscreen.
+- ```o``` - Chage video fit.
+- ```i``` - Show info.
+- ```c``` - Show/hide video controls.
 
 ## CDN link(s)
 
