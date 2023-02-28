@@ -44,7 +44,7 @@ class MMP4W {
   }
 
   set_event_listener() {
-    document.addEventListener("keydown", (e) => {
+    this.container.addEventListener("keydown", (e) => {
       if (e.key === this.KEY_PLAY_PAUSE) {
         this.play_pause();
       } else if (e.key === this.STOP) {
