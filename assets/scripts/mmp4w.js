@@ -154,7 +154,7 @@ class MMP4W {
   }
 
   async show_info() {
-    if (this.container.children.length >= 2) return;
+    // if (this.container.children.length >= 2) return;
 
     const info = this.get_info_element();
     this.container.appendChild(info);
