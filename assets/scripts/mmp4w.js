@@ -31,6 +31,19 @@ class MMP4W {
         this.set_event_listener();
     }
 
+    set_playlist(data)
+    {
+        this.playlist = data;
+        console.log(this.playlist)
+        this.video.src = this.playlist[this.index].url;
+        this.video.play();
+    }
+
+    get_playlist()
+    {
+        return this.playlist;
+    }
+
     set_container_style() {
         this.container.style.margin = 0;
         this.container.style.boxSizing = "border-box";
