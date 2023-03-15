@@ -4,18 +4,29 @@ class MMP4W {
     constructor() {
         this.container = document.querySelector("#mmp4w_container");
         this.video = document.querySelector("#mmp4w_video");
+        this.image = document.querySelector("#mmp4w_image");
 
         this.playlist = [];
+        /*
+        contains media object with following properties:
+        name,
+        size,
+        url,
+        thumbnail, 
+        uploader,
+        c_time:
+        */
+
         this.index = 0;
 
         this.SEEK_TIME = 5;
 
         this.KEY_PLAY_PAUSE = "p";
-        this.STOP = "s";
+        this.STOP = "0";
         this.MUTE = "m";
         this.VOLUME_UP = "k";
         this.VOLUME_DOWN = "j";
-        this.SEEK_BEHIND = "h";
+        (this.LOOP = "r"), (this.SEEK_BEHIND = "h");
         this.SEEK_FRONT = "l";
         this.FULL_SCREEN = "f";
         this.CHANGE_FIT = "o";
@@ -28,19 +39,59 @@ class MMP4W {
 
         this.set_container_style();
         this.set_video_style();
+        this.set_image_style();
         this.set_event_listener();
+        this.set_others();
     }
 
-    set_playlist(data)
-    {
+    set_others() {
+        let hammer = new Hammer(this.container);
+        hammer.on("swiperight", (e) => {
+            this.next();
+        });
+
+        hammer.on("swipeleft", (e) => {
+            this.previous();
+        });
+    }
+
+    set_playlist(data) {
+        this.index = 0;
         this.playlist = data;
-        console.log(this.playlist)
-        this.video.src = this.playlist[this.index].url;
-        this.video.play();
+        this.set_source();
     }
 
-    get_playlist()
-    {
+    set_source() {
+        const url = this.playlist[this.index].url;
+        const type = this.get_media_type(url);
+
+        if (type === "video") {
+            this.image.style.display = "none";
+            this.video.style.display = "block";
+            this.video.src = url;
+            this.video.play();
+        } else if (type === "image") {
+            this.video.style.display = "none";
+            this.video.pause();
+            this.image.style.display = "block";
+            this.image.src = url;
+        }
+    }
+
+    get_media_type(url = this.playlist[this.index].url) {
+        if (
+            url.endsWith(".jpg") ||
+            url.endsWith(".jpeg") ||
+            url.endsWith(".png") ||
+            url.endsWith(".webp") ||
+            url.endsWith(".gif")
+        )
+            return "image";
+        else if (url.endsWith(".webm")) return "video";
+        else return "unknown";
+    }
+
+    get_playlist() {
         return this.playlist;
     }
 
@@ -48,8 +99,9 @@ class MMP4W {
         this.container.style.margin = 0;
         this.container.style.boxSizing = "border-box";
         this.container.style.position = "relative";
+        this.container.setAttribute("tabindex", "0");
         // this.container.style.border = "2px solid red";
-        this.container.style.backgroundColor = "#111111";
+        this.container.style.backgroundColor = "#222226";
     }
 
     set_video_style() {
@@ -61,8 +113,17 @@ class MMP4W {
         this.video.controls = false;
     }
 
+    set_image_style() {
+        this.image.style.display = "none";
+        this.image.style.width = "100%";
+        this.image.style.height = "100%";
+        this.image.style.objectFit = "scale-down";
+        this.image.style.objectPosition = "center";
+    }
+
     set_event_listener() {
         this.container.addEventListener("keydown", (e) => {
+            console.log(e);
             if (e.key === this.KEY_PLAY_PAUSE) {
                 this.play_pause();
             } else if (e.key === this.STOP) {
@@ -71,6 +132,8 @@ class MMP4W {
                 this.mute();
             } else if (e.key === this.VOLUME_UP) {
                 this.volume_up();
+            } else if (e.key === this.LOOP) {
+                this.video.loop = true;
             } else if (e.key === this.VOLUME_DOWN) {
                 this.volume_down();
             } else if (e.key === this.SEEK_BEHIND && e.ctrlKey) {
@@ -93,20 +156,20 @@ class MMP4W {
                 this.previous();
             }
         });
+        console.log("done event");
     }
 
     next() {
         this.index + 1 < this.playlist.length ? this.index++ : (this.index = 0);
-        this.video.src = this.playlist[this.index].url;
-        this.video.play();
+        console.log("ide", this.index);
+        this.set_source();
     }
 
     previous() {
         this.index - 1 > -1
             ? this.index--
             : (this.index = this.playlist.length - 1);
-        this.video.src = this.playlist[this.index].url;
-        this.video.play();
+        this.set_source();
     }
 
     show_controls() {
@@ -157,12 +220,20 @@ class MMP4W {
         }
     }
 
+    get_media_element() {
+        const type = this.get_media_type();
+        if (type === "video") return this.video;
+        else return this.image;
+    }
+
     change_fit() {
         const layout = ["contain", "cover", "none", "scale-down"];
+        const media_element = this.get_media_element();
+        console.log(media_element);
         this.layout_index + 1 >= layout.length
             ? (this.layout_index = 0)
             : this.layout_index++;
-        this.video.style.objectFit = layout[this.layout_index];
+        media_element.style.objectFit = layout[this.layout_index];
     }
 
     get_info_element() {
