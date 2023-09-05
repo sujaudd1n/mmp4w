@@ -10,8 +10,8 @@ Minimalist media player for web. Control volume, current time, play-pause easily
 ## Setup
 
 -   Create a container element and set id as `mmp4w_container`.
--   Create a vidoe element and set id as `mmp4w_video`.
--   Create a img element and set id as `mmp4w_img` (even if you won't be using images).
+-   Create a video element and set id as `mmp4w_video`.
+-   Create a img element and set id as `mmp4w_image` (even if you won't be using images).
 
 ```html
 <figure id="mmp4w_container">
@@ -58,7 +58,7 @@ mmp4w.set_playlist(videos);
 
 The setup is complete.
 
-## Commands
+## Keybindings
 
 -   `p` - Play/pause the video.
 -   `s` - Stop the video.
