@@ -1,6 +1,5 @@
-:warning: **Warning**: Under development and unstable
 
-# mmp4w
+# MMP4W
 
 Minimalist media player for web. Control volume, current time, play-pause easily from keyboard. Supports both videos and images.
 
