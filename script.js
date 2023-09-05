@@ -1,1 +1,5 @@
-//import { mmp4w } from "https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js"
+import { mmp4w } from "./src/mmp4w.js";
+
+const videos = [{ url: "./vid.webm" }];
+
+mmp4w.set_playlist(videos);

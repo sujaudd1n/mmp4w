@@ -6,16 +6,18 @@ Minimalist media player for web. Control volume, current time, play-pause easily
 
 ## CDN
 
-<https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js>
+<https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/src/mmp4w.min.js>
 
 ## Setup
 
 -   Create a container element and set id as `mmp4w_container`.
 -   Create a vidoe element and set id as `mmp4w_video`.
+-   Create a img element and set id as `mmp4w_img` (even if you won't be using images).
 
 ```html
 <figure id="mmp4w_container">
     <video id="mmp4w_video"></video>
+    <img id="mmp4w_image" />
 </figure>
 ```
 
@@ -41,7 +43,7 @@ Inside `script.js` import the `mmp4w` object.
 ```js
 import { mmp4w } from "./src/mmp4w.js";
 // or from cdn
-//import { mmp4w } from "https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js"
+//import { mmp4w } from "https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/src/mmp4w.min.js";
 
 // Create an array of object. Each object represents a video element.
 
@@ -65,13 +67,12 @@ The setup is complete.
 -   `k` - Volume up.
 -   `j` - Volume down.
 -   `r` - Enable loop.
--   `h` - Next.
--   `l` - Previous.
+-   `h` - Previous.
+-   `l` - Next.
 -   `ctrl-h` - Seek behind.
 -   `ctrl-l` - Seek front.
 -   `f` - Fullscreen.
 -   `o` - Chage video fit.
--   `i` - Show info.
 -   `c` - Show/hide video controls.
 
 ## CDN link(s)

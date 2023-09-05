@@ -2,7 +2,7 @@ class MMP4W {
     constructor() {
         this.container = document.querySelector("#mmp4w_container");
         this.video = document.querySelector("#mmp4w_video");
-        this.image = document.querySelector("#mmp4w_image");
+        this.image = document.querySelector("#mmp4w_image") || undefined;
 
         this.playlist = [];
 
@@ -11,7 +11,7 @@ class MMP4W {
         this.SEEK_TIME = 5;
 
         this.KEY_PLAY_PAUSE = "p";
-        this.STOP = "0";
+        this.STOP = "s";
         this.MUTE = "m";
         this.VOLUME_UP = "k";
         this.VOLUME_DOWN = "j";
@@ -68,6 +68,7 @@ class MMP4W {
     set_playlist(data) {
         this.index = 0;
         this.playlist = data;
+        console.log(data);
         this.set_source();
     }
 
@@ -97,7 +98,13 @@ class MMP4W {
             url.endsWith(".gif")
         )
             return "image";
-        else if (url.endsWith(".webm")) return "video";
+        else if (
+            url.endsWith(".webm") ||
+            url.endsWith(".mp4") ||
+            url.endsWith(".mkv") ||
+            url.endsWith(".avi")
+        )
+            return "video";
         else return "unknown";
     }
 
@@ -117,7 +124,7 @@ class MMP4W {
             } else if (e.key === this.VOLUME_UP) {
                 this.volume_up();
             } else if (e.key === this.LOOP) {
-                this.video.loop = true;
+                this.video.loop = !this.video.loop;
             } else if (e.key === this.VOLUME_DOWN) {
                 this.volume_down();
             } else if (e.key === this.SEEK_BEHIND && e.ctrlKey) {
@@ -130,8 +137,6 @@ class MMP4W {
                 this.full_screen();
             } else if (e.key === this.CHANGE_FIT) {
                 this.change_fit();
-            } else if (e.key === this.SHOW_INFO) {
-                this.show_info();
             } else if (e.key === this.SHOW_CONTROLS) {
                 this.show_controls();
             } else if (e.key === this.NEXT) {
