@@ -73,7 +73,3 @@ The setup is complete.
 -   `f` - Fullscreen.
 -   `o` - Chage video fit.
 -   `c` - Show/hide video controls.
-
-## CDN link(s)
-
--   **JSDelivr**: <https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js>
