@@ -2,50 +2,78 @@
 
 # mmp4w
 
-Minimalist media player for web. Control volume, current time, play-pause easily from keyboard.
+Minimalist media player for web. Control volume, current time, play-pause easily from keyboard. Supports both videos and images.
 
-## Documentaion
+## CDN
 
-### Setup
+<https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js>
 
-- Add a script tag with ```defer``` attribute in ```head``` tag of html document.
-```js
-<script src="https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js" defer></script>
-```
-- Add ```mmp4w_container``` as value of ```id``` attribute of video container element.
-- Add ```mmp4w_video``` as value of ```id``` attribute of video element.
+## Setup
+
+-   Create a container element and set id as `mmp4w_container`.
+-   Create a vidoe element and set id as `mmp4w_video`.
+
 ```html
-    <figure id="mmp4w_container">
-        <video id="mmp4w_video" controls>
-            <source src="./video.mp4" type="video/mp4">
-        </video>
-   </figure> 
+<figure id="mmp4w_container">
+    <video id="mmp4w_video"></video>
+</figure>
 ```
-- Set width and height for the video container. The inside video element takes full width and height
-of its parent.
+
+-   Set width and height for the container element. Video element takes full width
+    and height of its parent.
+
 ```css
-#mmp4w_container
-{
-    /* example */
+/* example */
+#mmp4w_container {
     width: 900px;
     height: 450px;
 }
 ```
+
+-   Add a script tag with `defer` attribute and `type="module"` in `head` tag of html document.
+
+```js
+<script src="./script.js" type="module" defer></script>
+```
+
+Inside `script.js` import the `mmp4w` object.
+
+```js
+import { mmp4w } from "./src/mmp4w.js";
+// or from cdn
+//import { mmp4w } from "https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js"
+
+// Create an array of object. Each object represents a video element.
+
+const videos = [
+    { url: "<videourl>" },
+    { url: "<videourl>" },
+    { url: "<videourl>" },
+    { url: "<videourl>" },
+];
+
+mmp4w.set_playlist(videos);
+```
+
 The setup is complete.
 
-### Commands
+## Commands
 
-- ```p``` - Play/pause the video.
-- ```s``` - Stop the video.
-- ```m``` - Mute.
-- ```k``` - Volume up.
-- ```j``` - Volume down.
-- ```h``` - Seek behind.
-- ```f``` - Fullscreen.
-- ```o``` - Chage video fit.
-- ```i``` - Show info.
-- ```c``` - Show/hide video controls.
+-   `p` - Play/pause the video.
+-   `s` - Stop the video.
+-   `m` - Mute.
+-   `k` - Volume up.
+-   `j` - Volume down.
+-   `r` - Enable loop.
+-   `h` - Next.
+-   `l` - Previous.
+-   `ctrl-h` - Seek behind.
+-   `ctrl-l` - Seek front.
+-   `f` - Fullscreen.
+-   `o` - Chage video fit.
+-   `i` - Show info.
+-   `c` - Show/hide video controls.
 
 ## CDN link(s)
 
-- **JSDelivr**: <https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js>
+-   **JSDelivr**: <https://cdn.jsdelivr.net/gh/sujaudd1n/mmp4w/assets/scripts/mmp4w.min.js>

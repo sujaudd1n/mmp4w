@@ -1,25 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
-    <title>Player</title>
-    <link rel="stylesheet" href="assets/styles/style.css">
-    <link rel="stylesheet" href="assets/styles/video.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-    <script src="assets/scripts/mmp4w.js" defer></script>
-    <script src="assets/scripts/script.js" defer></script>
-</head>
-<body>
-    <div class="con">
-    <figure id="mmp4w_container">
-        <img src="" alt="" id="mmp4w_image">
-        <video id="mmp4w_video" controls>
-            <source src="./vid.webm" type="video/webm">
-        </video>
-   </figure> 
-    </div>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="referrer" content="no-referrer" />
+        <title>Player</title>
+        <link rel="stylesheet" href="./assets/styles/video.css" />
+        <script src="./script.js" type="module" defer></script>
+    </head>
+    <body>
+        <figure id="mmp4w_container">
+            <video src="mmp4w_video"></video>
+        </figure>
+    </body>
 </html>
