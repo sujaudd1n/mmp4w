@@ -32,6 +32,16 @@ class MMP4W {
         this.set_image_style();
         this.set_event_listener();
         this.set_others();
+
+        this.feedback_element = document.createElement("div");
+        this.feedback_element.textContent = "feedback";
+        this.feedback_element.classList.add("feedback_div");
+        this.feedback_element.style.background = "#fff";
+        this.feedback_element.style.position = "absolute";
+        this.feedback_element.style.top = "0";
+        this.feedback_element.style.left = "0";
+        this.feedback_element.style.right = "0";
+        this.container.appendChild(this.feedback_element);
     }
 
     set_container_style() {
@@ -68,7 +78,6 @@ class MMP4W {
     set_playlist(data) {
         this.index = 0;
         this.playlist = data;
-        console.log(data);
         this.set_source();
     }
 
@@ -87,6 +96,9 @@ class MMP4W {
             this.image.style.display = "block";
             this.image.src = url;
         }
+        console.log(document.activeElement)
+        this.container.focus();
+        console.log(document.activeElement)
     }
 
     get_media_type(url = this.playlist[this.index].url) {
@@ -112,11 +124,18 @@ class MMP4W {
         return this.playlist;
     }
 
+    give_feedback(text) {
+        this.feedback_element.textContent = text;
+    }
+
     set_event_listener() {
         this.container.addEventListener("keydown", (e) => {
             console.log(e);
             if (e.key === this.KEY_PLAY_PAUSE) {
                 this.play_pause();
+                this.give_feedback(this.video.paused);
+                ani.cancel();
+                ani.play();
             } else if (e.key === this.STOP) {
                 this.stop();
             } else if (e.key === this.MUTE) {
@@ -227,5 +246,16 @@ class MMP4W {
 }
 
 const mmp4w = new MMP4W();
+
+const keyframe = new KeyframeEffect(
+    mmp4w.feedback_element,
+    [{ opacity: 1 }, { opacity: 0, display: "none" }],
+    {
+        duration: 1000,
+        fill: "forwards",
+    }
+);
+
+const ani = new Animation(keyframe, document.timeline);
 
 export { mmp4w };
