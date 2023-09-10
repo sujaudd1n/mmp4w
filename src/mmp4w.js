@@ -41,6 +41,7 @@ class MMP4W {
         this.feedback_element.style.top = "0";
         this.feedback_element.style.left = "0";
         this.feedback_element.style.right = "0";
+        this.feedback_element.style.opacity = "0";
         this.container.appendChild(this.feedback_element);
     }
 
@@ -96,9 +97,9 @@ class MMP4W {
             this.image.style.display = "block";
             this.image.src = url;
         }
-        console.log(document.activeElement)
+        console.log(document.activeElement);
         this.container.focus();
-        console.log(document.activeElement)
+        console.log(document.activeElement);
     }
 
     get_media_type(url = this.playlist[this.index].url) {
@@ -124,8 +125,39 @@ class MMP4W {
         return this.playlist;
     }
 
-    give_feedback(text) {
-        this.feedback_element.textContent = text;
+    give_feedback(e) {
+        if (e.key === this.KEY_PLAY_PAUSE) {
+            const status = this.video.paused ? "Paused" : "Playing";
+            this.feedback_element.textContent = status;
+        } else if (e.key === this.STOP) {
+            this.stop();
+        } else if (e.key === this.MUTE) {
+            this.mute();
+        } else if (e.key === this.VOLUME_UP) {
+            this.volume_up();
+        } else if (e.key === this.LOOP) {
+            this.video.loop = !this.video.loop;
+        } else if (e.key === this.VOLUME_DOWN) {
+            this.volume_down();
+        } else if (e.key === this.SEEK_BEHIND && e.ctrlKey) {
+            e.preventDefault();
+            this.seek_behind();
+        } else if (e.key === this.SEEK_FRONT && e.ctrlKey) {
+            e.preventDefault();
+            this.seek_front();
+        } else if (e.key === this.FULL_SCREEN) {
+            this.full_screen();
+        } else if (e.key === this.CHANGE_FIT) {
+            this.change_fit();
+        } else if (e.key === this.SHOW_CONTROLS) {
+            this.show_controls();
+        } else if (e.key === this.NEXT) {
+            this.next();
+        } else if (e.key === this.PREV) {
+            this.previous();
+        }
+        ani.cancel();
+        ani.play();
     }
 
     set_event_listener() {
@@ -133,9 +165,6 @@ class MMP4W {
             console.log(e);
             if (e.key === this.KEY_PLAY_PAUSE) {
                 this.play_pause();
-                this.give_feedback(this.video.paused);
-                ani.cancel();
-                ani.play();
             } else if (e.key === this.STOP) {
                 this.stop();
             } else if (e.key === this.MUTE) {
@@ -163,8 +192,8 @@ class MMP4W {
             } else if (e.key === this.PREV) {
                 this.previous();
             }
+            this.give_feedback(e);
         });
-        console.log("done event");
     }
 
     next() {
@@ -249,7 +278,7 @@ const mmp4w = new MMP4W();
 
 const keyframe = new KeyframeEffect(
     mmp4w.feedback_element,
-    [{ opacity: 1 }, { opacity: 0, display: "none" }],
+    [{ opacity: 1 }, { opacity: 0 }],
     {
         duration: 1000,
         fill: "forwards",
