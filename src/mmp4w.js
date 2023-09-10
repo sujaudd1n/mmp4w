@@ -125,43 +125,63 @@ class MMP4W {
         return this.playlist;
     }
 
+    /**
+     * Depending on what the user typed it gives a vasual feedback
+     * to the uesr.
+     * @param {event} e Keydown event
+     */
     give_feedback(e) {
         if (e.key === this.KEY_PLAY_PAUSE) {
             const status = this.video.paused ? "Paused" : "Playing";
             this.feedback_element.textContent = status;
         } else if (e.key === this.STOP) {
-            this.stop();
+            const status = "Stopped";
+            this.feedback_element.textContent = status;
         } else if (e.key === this.MUTE) {
-            this.mute();
+            const status = this.video.muted ? "Muted: true" : "Muted: false";
+            this.feedback_element.textContent = status;
         } else if (e.key === this.VOLUME_UP) {
-            this.volume_up();
+            const status = Math.round(this.video.volume * 10);
+            this.feedback_element.textContent = status;
         } else if (e.key === this.LOOP) {
-            this.video.loop = !this.video.loop;
+            const status = this.video.loop ? "Loop: true" : "Loop: false";
+            this.feedback_element.textContent = status;
         } else if (e.key === this.VOLUME_DOWN) {
-            this.volume_down();
+            const status = Math.round(this.video.volume * 10);
+            this.feedback_element.textContent = status;
         } else if (e.key === this.SEEK_BEHIND && e.ctrlKey) {
-            e.preventDefault();
-            this.seek_behind();
+            const status = Math.round(this.video.currentTime);
+            this.feedback_element.textContent = status;
         } else if (e.key === this.SEEK_FRONT && e.ctrlKey) {
-            e.preventDefault();
-            this.seek_front();
+            const status = Math.round(this.video.currentTime);
+            this.feedback_element.textContent = status;
         } else if (e.key === this.FULL_SCREEN) {
-            this.full_screen();
+            const status = document.fullscreenElement
+                ? "Fullscreed: enabled"
+                : "Fullscreen: disabled";
+            this.feedback_element.textContent = status;
         } else if (e.key === this.CHANGE_FIT) {
-            this.change_fit();
+            const status = this.get_media_element().style.objectFit;
+            this.feedback_element.textContent = status;
         } else if (e.key === this.SHOW_CONTROLS) {
-            this.show_controls();
+            const status = this.video.controls
+                ? "Controls: enabled"
+                : "Controls: disabled";
+            this.feedback_element.textContent = status;
         } else if (e.key === this.NEXT) {
-            this.next();
+            const status = "Next";
+            this.feedback_element.textContent = status;
         } else if (e.key === this.PREV) {
             this.previous();
+            const status = "Previous";
+            this.feedback_element.textContent = status;
         }
         ani.cancel();
         ani.play();
     }
 
     set_event_listener() {
-        this.container.addEventListener("keydown", (e) => {
+        this.container.addEventListener("keydown", async (e) => {
             console.log(e);
             if (e.key === this.KEY_PLAY_PAUSE) {
                 this.play_pause();
@@ -182,7 +202,7 @@ class MMP4W {
                 e.preventDefault();
                 this.seek_front();
             } else if (e.key === this.FULL_SCREEN) {
-                this.full_screen();
+                await this.full_screen();
             } else if (e.key === this.CHANGE_FIT) {
                 this.change_fit();
             } else if (e.key === this.SHOW_CONTROLS) {
@@ -249,11 +269,11 @@ class MMP4W {
         );
     }
 
-    full_screen() {
+    async full_screen() {
         if (!document.fullscreenElement) {
-            this.container.requestFullscreen();
+            await this.container.requestFullscreen();
         } else {
-            document.exitFullscreen();
+            await document.exitFullscreen();
         }
     }
 
