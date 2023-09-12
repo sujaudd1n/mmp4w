@@ -30,16 +30,28 @@ class MMP4W {
                 "p",
                 {
                     name: "p",
-                    hander_function: MMP4W.prototype.play_pause.bind(this),
-                    feedback_function: MMP4W.prototype.play_pause_feedback.bind(this),
+                    description: "Play and pause",
+                    handler_function: this.play_pause.bind(this),
+                    feedback_function:
+                        MMP4W.prototype.play_pause_feedback.bind(this),
                 },
             ],
             [
                 "s",
                 {
                     name: "s",
-                    hander_function: this.stop,
+                    description: "Stop",
+                    handler_function: this.stop,
                     feedback_function: 1,
+                },
+            ],
+            [
+                "l",
+                {
+                    name: "l",
+                    description: "Next",
+                    handler_function: this.next.bind(this),
+                    feedback_function: this.next_feedback.bind(this),
                 },
             ],
         ]);
@@ -144,10 +156,6 @@ class MMP4W {
         return this.playlist;
     }
 
-    play_pause_feedback() {
-        const status = this.video.paused ? "Paused" : "Playing";
-        this.feedback_element.textContent = status;
-    }
     /**
      * Depending on what the user typed it gives a vasual feedback
      * to the uesr.
@@ -193,8 +201,6 @@ class MMP4W {
                 : "Controls: disabled";
             this.feedback_element.textContent = status;
         } else if (e.key === this.NEXT) {
-            const status = "Next";
-            this.feedback_element.textContent = status;
         } else if (e.key === this.PREV) {
             this.previous();
             const status = "Previous";
@@ -202,16 +208,30 @@ class MMP4W {
         }
         */
         if (this.valid_events.has(e.key))
-            this.valid_events.get(e.key).feedback_function();
+            this.valid_events.get(e.key).feedback_function(e.ctrlKey);
         ani.cancel();
         ani.play();
+    }
+    play_pause_feedback() {
+        const status = this.video.paused ? "Paused" : "Playing";
+        this.feedback_element.textContent = status;
+    }
+
+    next_feedback(isctrl) {
+        console.log(isctrl);
+        let status;
+        if (!isctrl) status = "Next";
+        else status = Math.round(this.video.currentTime);
+        this.feedback_element.textContent = status;
     }
 
     set_event_listener() {
         this.container.addEventListener("keydown", async (e) => {
-            if (this.valid_events.has(e.key))
-                this.valid_events.get(e.key).hander_function();
-            this.give_feedback(e);
+            if (this.valid_events.has(e.key)) {
+                if (e.ctrlKey) e.preventDefault();
+                this.valid_events.get(e.key).handler_function(e.ctrlKey);
+                this.give_feedback(e);
+            }
             /*
             if (e.key === this.KEY_PLAY_PAUSE) {
                 this.play_pause();
@@ -246,10 +266,16 @@ class MMP4W {
         });
     }
 
-    next() {
-        this.index + 1 < this.playlist.length ? this.index++ : (this.index = 0);
-        console.log("ide", this.index);
-        this.set_source();
+    next(isctrl) {
+        if (!isctrl) {
+            this.index + 1 < this.playlist.length
+                ? this.index++
+                : (this.index = 0);
+            console.log("ide", this.index);
+            this.set_source();
+        } else {
+            this.seek_front();
+        }
     }
 
     previous() {
@@ -264,7 +290,7 @@ class MMP4W {
     }
 
     play_pause() {
-        console.log(this.video)
+        console.log(this.video);
         if (this.video.ended || this.video.paused) this.video.play();
         else this.video.pause();
     }
