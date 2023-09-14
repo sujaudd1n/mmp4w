@@ -25,12 +25,18 @@ class MMP4W {
         this.NEXT = "l";
         this.PREV = "h";
 
+        /**
+         * valid_event contains all the keys whose keydown event is
+         * handled. It maps from key to an object which contains
+         * information about the actions and description of what to
+         * do when the event is fired.
+         */
         this.valid_events = new Map([
             [
                 "p",
                 {
                     name: "p",
-                    description: "Play and pause",
+                    description: "Play or pause",
                     handler_function: this.play_pause.bind(this),
                     feedback_function:
                         MMP4W.prototype.play_pause_feedback.bind(this),
@@ -162,7 +168,12 @@ class MMP4W {
      * @param {event} e Keydown event
      */
     give_feedback(e) {
-        /*
+        if (this.valid_events.has(e.key))
+            this.valid_events.get(e.key).feedback_function(e.ctrlKey);
+        ani.cancel();
+        ani.play();
+    }
+    /*
         if (e.key === this.KEY_PLAY_PAUSE) {
             const status = this.video.paused ? "Paused" : "Playing";
             this.feedback_element.textContent = status;
@@ -207,11 +218,7 @@ class MMP4W {
             this.feedback_element.textContent = status;
         }
         */
-        if (this.valid_events.has(e.key))
-            this.valid_events.get(e.key).feedback_function(e.ctrlKey);
-        ani.cancel();
-        ani.play();
-    }
+
     play_pause_feedback() {
         const status = this.video.paused ? "Paused" : "Playing";
         this.feedback_element.textContent = status;
