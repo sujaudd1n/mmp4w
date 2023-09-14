@@ -173,51 +173,54 @@ class MMP4W {
         ani.cancel();
         ani.play();
     }
-    /*
-        if (e.key === this.KEY_PLAY_PAUSE) {
-            const status = this.video.paused ? "Paused" : "Playing";
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.STOP) {
-            const status = "Stopped";
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.MUTE) {
-            const status = this.video.muted ? "Muted: true" : "Muted: false";
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.VOLUME_UP) {
-            const status = Math.round(this.video.volume * 10);
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.LOOP) {
-            const status = this.video.loop ? "Loop: true" : "Loop: false";
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.VOLUME_DOWN) {
-            const status = Math.round(this.video.volume * 10);
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.SEEK_BEHIND && e.ctrlKey) {
-            const status = Math.round(this.video.currentTime);
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.SEEK_FRONT && e.ctrlKey) {
-            const status = Math.round(this.video.currentTime);
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.FULL_SCREEN) {
-            const status = document.fullscreenElement
-                ? "Fullscreed: enabled"
-                : "Fullscreen: disabled";
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.CHANGE_FIT) {
-            const status = this.get_media_element().style.objectFit;
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.SHOW_CONTROLS) {
-            const status = this.video.controls
-                ? "Controls: enabled"
-                : "Controls: disabled";
-            this.feedback_element.textContent = status;
-        } else if (e.key === this.NEXT) {
-        } else if (e.key === this.PREV) {
-            this.previous();
-            const status = "Previous";
-            this.feedback_element.textContent = status;
-        }
-        */
+    stop_feedback() {
+        const status = "Stopped";
+        this.feedback_element.textContent = status;
+    }
+    mute_feedback() {
+        const status = this.video.muted ? "Muted: true" : "Muted: false";
+        this.feedback_element.textContent = status;
+    }
+    loop_feedback() {
+        const status = this.video.loop ? "Loop: true" : "Loop: false";
+        this.feedback_element.textContent = status;
+    }
+    volume_down_feedback() {
+        const status = Math.round(this.video.volume * 10);
+        this.feedback_element.textContent = status;
+    }
+    volume_up_feedback() {
+        const status = Math.round(this.video.volume * 10);
+        this.feedback_element.textContent = status;
+    }
+    seek_behind_feedback() {
+        const status = Math.round(this.video.currentTime);
+        this.feedback_element.textContent = status;
+    }
+    seek_front_feedback() {
+        const status = Math.round(this.video.currentTime);
+        this.feedback_element.textContent = status;
+    }
+    fullscreen_feedback() {
+        const status = document.fullscreenElement
+            ? "Fullscreed: enabled"
+            : "Fullscreen: disabled";
+        this.feedback_element.textContent = status;
+    }
+    change_fit_feedback() {
+        const status = this.get_media_element().style.objectFit;
+        this.feedback_element.textContent = status;
+    }
+    show_controls_feedback() {
+        const status = this.video.controls
+            ? "Controls: enabled"
+            : "Controls: disabled";
+        this.feedback_element.textContent = status;
+    }
+    prev_feedback() {
+        const status = "Previous";
+        this.feedback_element.textContent = status;
+    }
 
     play_pause_feedback() {
         const status = this.video.paused ? "Paused" : "Playing";
