@@ -59,6 +59,60 @@ class MMP4W {
                     feedback_function: this.next_feedback.bind(this),
                 },
             ],
+            [
+                "m",
+                {
+                    name: "m",
+                    description: "Mute",
+                    handler_function: this.mute.bind(this),
+                    feedback_function: this.mute_feedback.bind(this),
+                },
+            ],
+            [
+                "k",
+                {
+                    name: "k",
+                    description: "Volume up",
+                    handler_function: this.volume_up.bind(this),
+                    feedback_function: this.volume_up_feedback.bind(this),
+                },
+            ],
+            [
+                "j",
+                {
+                    name: "j",
+                    description: "Volume down",
+                    handler_function: this.volume_down.bind(this),
+                    feedback_function: this.volume_down_feedback.bind(this),
+                },
+            ],
+            [
+                "r",
+                {
+                    name: "r",
+                    description: "Loop",
+                    handler_function: this.loop.bind(this),
+                    feedback_function: this.loop_feedback.bind(this),
+                },
+            ],
+            [
+                "f",
+                {
+                    name: "f",
+                    description: "Fullscreen",
+                    handler_function: this.full_screen.bind(this),
+                    feedback_function: this.fullscreen_feedback.bind(this),
+                },
+            ],
+            [
+                "o",
+                {
+                    name: "o",
+                    description: "Object fit",
+                    handler_function: this.change_fit.bind(this),
+                    feedback_function: this.change_fit_feedback.bind(this),
+                },
+            ],
         ]);
 
         this.layout_index = 0;
@@ -161,13 +215,25 @@ class MMP4W {
         return this.playlist;
     }
 
+    set_event_listener() {
+        document.body.addEventListener("keydown", async (e) => {
+            if (this.valid_events.has(e.key)) {
+                const event_description = this.valid_events.get(e.key);
+                await event_description.handler_function(e);
+                this.give_feedback(e);
+            }
+        });
+    }
+
     /**
      * Depending on what the user typed it gives a vasual feedback
      * to the uesr.
      * @param {event} e Keydown event
      */
-    give_feedback(e) {
-        const feedback_text = this.valid_events.get(e.key).feedback_function(e);
+    async give_feedback(e) {
+        const feedback_text = await this.valid_events
+            .get(e.key)
+            .feedback_function(e);
         this.feedback_element.textContent = feedback_text;
         ani.cancel();
         ani.play();
@@ -308,16 +374,6 @@ class MMP4W {
 
     prev_feedback() {
         return "Previous";
-    }
-
-    set_event_listener() {
-        document.body.addEventListener("keydown", async (e) => {
-            if (this.valid_events.has(e.key)) {
-                const event_description = this.valid_events.get(e.key);
-                event_description.handler_function(e);
-                this.give_feedback(e);
-            }
-        });
     }
 
     get_media_element() {
