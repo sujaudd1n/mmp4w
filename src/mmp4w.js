@@ -167,7 +167,7 @@ class MMP4W {
      * @param {event} e Keydown event
      */
     give_feedback(e) {
-        const feedback_text = this.valid_events.get(e.key).feedback_function();
+        const feedback_text = this.valid_events.get(e.key).feedback_function(e);
         this.feedback_element.textContent = feedback_text;
         ani.cancel();
         ani.play();
@@ -177,31 +177,43 @@ class MMP4W {
         this.video.pause();
         this.video.currentTime = 0;
     }
+
     stop_feedback(e) {
         return "Stopped";
     }
+
+    mute() {
+        this.video.muted = !this.video.muted;
+    }
+
     mute_feedback() {
         return this.video.muted ? "Muted: true" : "Muted: false";
     }
-    mute() {
-        this.video.muted = !this.video.muted;
+
+    loop() {
+        this.video.loop = true;
     }
 
     loop_feedback() {
         return this.video.loop ? "Loop: true" : "Loop: false";
     }
+
     volume_down() {
         this.video.volume = Math.max(0, this.video.volume - 0.1);
     }
+
     volume_down_feedback() {
         return Math.round(this.video.volume * 10);
     }
+
     volume_up() {
         this.video.volume = Math.min(1, this.video.volume + 0.1);
     }
+
     volume_up_feedback() {
         return Math.round(this.video.volume * 10);
     }
+
     seek_behind() {
         this.video.currentTime = Math.max(
             0,
@@ -212,6 +224,7 @@ class MMP4W {
     seek_behind_feedback() {
         return Math.round(this.video.currentTime);
     }
+
     seek_front() {
         this.video.currentTime = Math.min(
             this.video.duration,
@@ -222,6 +235,7 @@ class MMP4W {
     seek_front_feedback() {
         return Math.round(this.video.currentTime);
     }
+
     async full_screen() {
         if (!document.fullscreenElement) {
             await this.container.requestFullscreen();
@@ -235,6 +249,7 @@ class MMP4W {
             ? "Fullscreed: enabled"
             : "Fullscreen: disabled";
     }
+
     change_fit() {
         const layout = ["contain", "cover", "none", "scale-down"];
         const media_element = this.get_media_element();
@@ -244,9 +259,11 @@ class MMP4W {
             : this.layout_index++;
         media_element.style.objectFit = layout[this.layout_index];
     }
+
     change_fit_feedback() {
         return this.get_media_element().style.objectFit;
     }
+
     show_controls() {
         this.video.controls = !this.video.controls;
     }
@@ -254,6 +271,34 @@ class MMP4W {
     show_controls_feedback() {
         return this.video.controls ? "Controls: enabled" : "Controls: disabled";
     }
+
+    play_pause() {
+        console.log(this.video);
+        if (this.video.ended || this.video.paused) this.video.play();
+        else this.video.pause();
+    }
+
+    play_pause_feedback() {
+        return this.video.paused ? "Paused" : "Playing";
+    }
+
+    next(e) {
+        if (!e.ctrlKey) {
+            this.index + 1 < this.playlist.length
+                ? this.index++
+                : (this.index = 0);
+            this.set_source();
+        } else {
+            e.preventDefault();
+            this.seek_front();
+        }
+    }
+
+    next_feedback(e) {
+        if (!e.ctrlKey) return "Next";
+        else return Math.round(this.video.currentTime);
+    }
+
     previous() {
         this.index - 1 > -1
             ? this.index--
@@ -264,40 +309,12 @@ class MMP4W {
     prev_feedback() {
         return "Previous";
     }
-    play_pause() {
-        console.log(this.video);
-        if (this.video.ended || this.video.paused) this.video.play();
-        else this.video.pause();
-    }
-
-    play_pause_feedback() {
-        return this.video.paused ? "Paused" : "Playing";
-    }
-    next(isctrl) {
-        if (!isctrl) {
-            this.index + 1 < this.playlist.length
-                ? this.index++
-                : (this.index = 0);
-            console.log("ide", this.index);
-            this.set_source();
-        } else {
-            this.seek_front();
-        }
-    }
-
-    next_feedback(isctrl) {
-        console.log(isctrl);
-        let status;
-        if (!isctrl) status = "Next";
-        else status = Math.round(this.video.currentTime);
-    }
 
     set_event_listener() {
-        this.container.addEventListener("keydown", async (e) => {
+        document.body.addEventListener("keydown", async (e) => {
             if (this.valid_events.has(e.key)) {
-                if (e.ctrlKey) e.preventDefault();
-
-                this.valid_events.get(e.key).handler_function(e.ctrlKey);
+                const event_description = this.valid_events.get(e.key);
+                event_description.handler_function(e);
                 this.give_feedback(e);
             }
         });
