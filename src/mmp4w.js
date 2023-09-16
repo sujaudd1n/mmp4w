@@ -38,8 +38,7 @@ class MMP4W {
                     name: "p",
                     description: "Play or pause",
                     handler_function: this.play_pause.bind(this),
-                    feedback_function:
-                        MMP4W.prototype.play_pause_feedback.bind(this),
+                    feedback_function: this.play_pause_feedback.bind(this),
                 },
             ],
             [
@@ -47,8 +46,8 @@ class MMP4W {
                 {
                     name: "s",
                     description: "Stop",
-                    handler_function: this.stop,
-                    feedback_function: 1,
+                    handler_function: this.stop.bind(this),
+                    feedback_function: this.stop_feedback.bind(this),
                 },
             ],
             [
@@ -168,114 +167,112 @@ class MMP4W {
      * @param {event} e Keydown event
      */
     give_feedback(e) {
-        if (this.valid_events.has(e.key))
-            this.valid_events.get(e.key).feedback_function(e.ctrlKey);
+        const feedback_text = this.valid_events.get(e.key).feedback_function();
+        this.feedback_element.textContent = feedback_text;
         ani.cancel();
         ani.play();
     }
-    stop_feedback() {
-        const status = "Stopped";
-        this.feedback_element.textContent = status;
+
+    stop() {
+        this.video.pause();
+        this.video.currentTime = 0;
+    }
+    stop_feedback(e) {
+        return "Stopped";
     }
     mute_feedback() {
-        const status = this.video.muted ? "Muted: true" : "Muted: false";
-        this.feedback_element.textContent = status;
+        return this.video.muted ? "Muted: true" : "Muted: false";
     }
+    mute() {
+        this.video.muted = !this.video.muted;
+    }
+
     loop_feedback() {
-        const status = this.video.loop ? "Loop: true" : "Loop: false";
-        this.feedback_element.textContent = status;
+        return this.video.loop ? "Loop: true" : "Loop: false";
+    }
+    volume_down() {
+        this.video.volume = Math.max(0, this.video.volume - 0.1);
     }
     volume_down_feedback() {
-        const status = Math.round(this.video.volume * 10);
-        this.feedback_element.textContent = status;
+        return Math.round(this.video.volume * 10);
+    }
+    volume_up() {
+        this.video.volume = Math.min(1, this.video.volume + 0.1);
     }
     volume_up_feedback() {
-        const status = Math.round(this.video.volume * 10);
-        this.feedback_element.textContent = status;
+        return Math.round(this.video.volume * 10);
     }
+    seek_behind() {
+        this.video.currentTime = Math.max(
+            0,
+            this.video.currentTime - this.SEEK_TIME
+        );
+    }
+
     seek_behind_feedback() {
-        const status = Math.round(this.video.currentTime);
-        this.feedback_element.textContent = status;
+        return Math.round(this.video.currentTime);
     }
+    seek_front() {
+        this.video.currentTime = Math.min(
+            this.video.duration,
+            this.video.currentTime + this.SEEK_TIME
+        );
+    }
+
     seek_front_feedback() {
-        const status = Math.round(this.video.currentTime);
-        this.feedback_element.textContent = status;
+        return Math.round(this.video.currentTime);
     }
+    async full_screen() {
+        if (!document.fullscreenElement) {
+            await this.container.requestFullscreen();
+        } else {
+            await document.exitFullscreen();
+        }
+    }
+
     fullscreen_feedback() {
-        const status = document.fullscreenElement
+        return document.fullscreenElement
             ? "Fullscreed: enabled"
             : "Fullscreen: disabled";
-        this.feedback_element.textContent = status;
+    }
+    change_fit() {
+        const layout = ["contain", "cover", "none", "scale-down"];
+        const media_element = this.get_media_element();
+        console.log(media_element);
+        this.layout_index + 1 >= layout.length
+            ? (this.layout_index = 0)
+            : this.layout_index++;
+        media_element.style.objectFit = layout[this.layout_index];
     }
     change_fit_feedback() {
-        const status = this.get_media_element().style.objectFit;
-        this.feedback_element.textContent = status;
+        return this.get_media_element().style.objectFit;
     }
+    show_controls() {
+        this.video.controls = !this.video.controls;
+    }
+
     show_controls_feedback() {
-        const status = this.video.controls
-            ? "Controls: enabled"
-            : "Controls: disabled";
-        this.feedback_element.textContent = status;
+        return this.video.controls ? "Controls: enabled" : "Controls: disabled";
     }
+    previous() {
+        this.index - 1 > -1
+            ? this.index--
+            : (this.index = this.playlist.length - 1);
+        this.set_source();
+    }
+
     prev_feedback() {
-        const status = "Previous";
-        this.feedback_element.textContent = status;
+        return "Previous";
+    }
+    play_pause() {
+        console.log(this.video);
+        if (this.video.ended || this.video.paused) this.video.play();
+        else this.video.pause();
     }
 
     play_pause_feedback() {
-        const status = this.video.paused ? "Paused" : "Playing";
-        this.feedback_element.textContent = status;
+        return this.video.paused ? "Paused" : "Playing";
     }
-
-    next_feedback(isctrl) {
-        console.log(isctrl);
-        let status;
-        if (!isctrl) status = "Next";
-        else status = Math.round(this.video.currentTime);
-        this.feedback_element.textContent = status;
-    }
-
-    set_event_listener() {
-        this.container.addEventListener("keydown", async (e) => {
-            if (this.valid_events.has(e.key)) {
-                if (e.ctrlKey) e.preventDefault();
-                this.valid_events.get(e.key).handler_function(e.ctrlKey);
-                this.give_feedback(e);
-            }
-            /*
-            if (e.key === this.KEY_PLAY_PAUSE) {
-                this.play_pause();
-            } else if (e.key === this.STOP) {
-                this.stop();
-            } else if (e.key === this.MUTE) {
-                this.mute();
-            } else if (e.key === this.VOLUME_UP) {
-                this.volume_up();
-            } else if (e.key === this.LOOP) {
-                this.video.loop = !this.video.loop;
-            } else if (e.key === this.VOLUME_DOWN) {
-                this.volume_down();
-            } else if (e.key === this.SEEK_BEHIND && e.ctrlKey) {
-                e.preventDefault();
-                this.seek_behind();
-            } else if (e.key === this.SEEK_FRONT && e.ctrlKey) {
-                e.preventDefault();
-                this.seek_front();
-            } else if (e.key === this.FULL_SCREEN) {
-                await this.full_screen();
-            } else if (e.key === this.CHANGE_FIT) {
-                this.change_fit();
-            } else if (e.key === this.SHOW_CONTROLS) {
-                this.show_controls();
-            } else if (e.key === this.NEXT) {
-                this.next();
-            } else if (e.key === this.PREV) {
-                this.previous();
-            }
-            */
-        });
-    }
-
     next(isctrl) {
         if (!isctrl) {
             this.index + 1 < this.playlist.length
@@ -288,76 +285,28 @@ class MMP4W {
         }
     }
 
-    previous() {
-        this.index - 1 > -1
-            ? this.index--
-            : (this.index = this.playlist.length - 1);
-        this.set_source();
+    next_feedback(isctrl) {
+        console.log(isctrl);
+        let status;
+        if (!isctrl) status = "Next";
+        else status = Math.round(this.video.currentTime);
     }
 
-    show_controls() {
-        this.video.controls = !this.video.controls;
-    }
+    set_event_listener() {
+        this.container.addEventListener("keydown", async (e) => {
+            if (this.valid_events.has(e.key)) {
+                if (e.ctrlKey) e.preventDefault();
 
-    play_pause() {
-        console.log(this.video);
-        if (this.video.ended || this.video.paused) this.video.play();
-        else this.video.pause();
-    }
-
-    stop() {
-        this.video.pause();
-        this.video.currentTime = 0;
-    }
-
-    mute() {
-        this.video.muted = !this.video.muted;
-    }
-
-    volume_up() {
-        this.video.volume = Math.min(1, this.video.volume + 0.1);
-    }
-
-    volume_down() {
-        this.video.volume = Math.max(0, this.video.volume - 0.1);
-    }
-
-    seek_behind() {
-        this.video.currentTime = Math.max(
-            0,
-            this.video.currentTime - this.SEEK_TIME
-        );
-    }
-
-    seek_front() {
-        this.video.currentTime = Math.min(
-            this.video.duration,
-            this.video.currentTime + this.SEEK_TIME
-        );
-    }
-
-    async full_screen() {
-        if (!document.fullscreenElement) {
-            await this.container.requestFullscreen();
-        } else {
-            await document.exitFullscreen();
-        }
+                this.valid_events.get(e.key).handler_function(e.ctrlKey);
+                this.give_feedback(e);
+            }
+        });
     }
 
     get_media_element() {
         const type = this.get_media_type();
         if (type === "video") return this.video;
         else return this.image;
-    }
-
-    change_fit() {
-        const layout = ["contain", "cover", "none", "scale-down"];
-        const media_element = this.get_media_element();
-        console.log(media_element);
-        this.layout_index + 1 >= layout.length
-            ? (this.layout_index = 0)
-            : this.layout_index++;
-        media_element.style.objectFit = layout[this.layout_index];
     }
 }
 
