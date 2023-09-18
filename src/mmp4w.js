@@ -280,7 +280,7 @@ class MMP4W {
     }
 
     loop() {
-        this.video.loop = true;
+        this.video.loop = !this.video.loop;
     }
 
     loop_feedback() {
