@@ -60,6 +60,15 @@ class MMP4W {
                 },
             ],
             [
+                "h",
+                {
+                    name: "h",
+                    description: "Prev",
+                    handler_function: this.previous.bind(this),
+                    feedback_function: this.prev_feedback.bind(this),
+                },
+            ],
+            [
                 "m",
                 {
                     name: "m",
@@ -113,6 +122,15 @@ class MMP4W {
                     feedback_function: this.change_fit_feedback.bind(this),
                 },
             ],
+            [
+                "c",
+                {
+                    name: "c",
+                    description: "Show controls",
+                    handler_function: this.show_controls.bind(this),
+                    feedback_function: this.show_controls_feedback.bind(this),
+                },
+            ],
         ]);
 
         this.layout_index = 0;
@@ -122,12 +140,17 @@ class MMP4W {
         this.set_image_style();
         this.set_event_listener();
         this.set_others();
-
+        this.set_feedback_element();
+    }
+    set_feedback_element() {
         this.feedback_element = document.createElement("div");
         this.feedback_element.textContent = "feedback";
         this.feedback_element.classList.add("feedback_div");
-        this.feedback_element.style.background = "#fff";
+        this.feedback_element.style.background = "#222226";
+        this.feedback_element.style.color = "#eeeeee";
         this.feedback_element.style.position = "absolute";
+        this.feedback_element.style.padding = "5px";
+        this.feedback_element.style.textAlign = "center";
         this.feedback_element.style.top = "0";
         this.feedback_element.style.left = "0";
         this.feedback_element.style.right = "0";
