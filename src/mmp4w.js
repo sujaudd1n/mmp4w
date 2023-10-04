@@ -240,7 +240,10 @@ class MMP4W {
 
     set_event_listener() {
         document.body.addEventListener("keydown", async (e) => {
-            if (this.valid_events.has(e.key) && document.activeElement.tagName != "INPUT") {
+            if (
+                this.valid_events.has(e.key) &&
+                document.activeElement.tagName != "INPUT"
+            ) {
                 const event_description = this.valid_events.get(e.key);
                 await event_description.handler_function(e);
                 this.give_feedback(e);
@@ -375,14 +378,15 @@ class MMP4W {
 
     next(e) {
         if (!e.ctrlKey) {
-            this.index + 1 < this.playlist.length
-                ? this.index++
-                : (this.index = 0);
-            this.set_source();
+            this.next_playback();
         } else {
             e.preventDefault();
             this.seek_front();
         }
+    }
+    next_playback() {
+        this.index + 1 < this.playlist.length ? this.index++ : (this.index = 0);
+        this.set_source();
     }
 
     next_feedback(e) {
@@ -392,14 +396,17 @@ class MMP4W {
 
     previous(e) {
         if (!e.ctrlKey) {
-            this.index - 1 > -1
-                ? this.index--
-                : (this.index = this.playlist.length - 1);
-            this.set_source();
+            this.previous_playback();
         } else {
             e.preventDefault();
             this.seek_behind();
         }
+    }
+    previous_playback() {
+        this.index - 1 > -1
+            ? this.index--
+            : (this.index = this.playlist.length - 1);
+        this.set_source();
     }
 
     prev_feedback() {
