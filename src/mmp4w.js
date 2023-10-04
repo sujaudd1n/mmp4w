@@ -240,7 +240,7 @@ class MMP4W {
 
     set_event_listener() {
         document.body.addEventListener("keydown", async (e) => {
-            if (this.valid_events.has(e.key)) {
+            if (this.valid_events.has(e.key) && document.activeElement.tagName != "INPUT") {
                 const event_description = this.valid_events.get(e.key);
                 await event_description.handler_function(e);
                 this.give_feedback(e);
@@ -262,12 +262,14 @@ class MMP4W {
         ani.play();
     }
 
-    stop() {
+    stop(e) {
+        if (e.ctrlKey) return;
         this.video.pause();
         this.video.currentTime = 0;
     }
 
     stop_feedback(e) {
+        if (e.ctrlKey) return;
         return "Stopped";
     }
 
