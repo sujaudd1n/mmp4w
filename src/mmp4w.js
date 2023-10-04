@@ -388,15 +388,21 @@ class MMP4W {
         else return Math.round(this.video.currentTime);
     }
 
-    previous() {
-        this.index - 1 > -1
-            ? this.index--
-            : (this.index = this.playlist.length - 1);
-        this.set_source();
+    previous(e) {
+        if (!e.ctrlKey) {
+            this.index - 1 > -1
+                ? this.index--
+                : (this.index = this.playlist.length - 1);
+            this.set_source();
+        } else {
+            e.preventDefault();
+            this.seek_behind();
+        }
     }
 
     prev_feedback() {
-        return "Previous";
+        if (!e.ctrlKey) return "Previous";
+        else return Math.round(this.video.currentTime);
     }
 
     get_media_element() {
