@@ -213,6 +213,26 @@ class MMP4W {
         console.log(document.activeElement);
         this.container.focus();
         console.log(document.activeElement);
+
+        this.preload_media();
+    }
+
+    preload_media() {
+        const url = this.playlist[(this.index + 1) % this.playlist.length].url;
+        const type = this.get_media_type(url);
+
+        const v = document.createElement("link");
+        v.rel = "preload";
+        v.href = url;
+
+        if (type === "video") {
+            v.as = "video";
+        } else {
+            v.as = "image";
+        }
+        console.log(v);
+
+        document.head.appendChild(v);
     }
 
     get_media_type(url = this.playlist[this.index].url) {
@@ -248,6 +268,9 @@ class MMP4W {
                 await event_description.handler_function(e);
                 this.give_feedback(e);
             }
+        });
+        this.video.addEventListener("ended", () => {
+            this.next({ctrlKey: false});
         });
     }
 
