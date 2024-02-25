@@ -259,7 +259,7 @@ class MMP4W {
                 this.give_feedback(e);
             }
         });
-        this.video.addEventListener("ended", () => {
+        this.video_element.addEventListener("ended", () => {
             this.next({ctrlKey: false});
         });
     }
