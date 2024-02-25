@@ -208,21 +208,21 @@ class MMP4W {
     }
 
     preload_media() {
-        const url = this.playlist[(this.index + 1) % this.playlist.length].url;
-        const type = this.get_media_type(url);
+        for (let i = 1; i < 4; ++i) {
+            const url = this.playlist[(this.index + i) % this.playlist.length].url;
+            const type = this.get_media_type(url);
 
-        const v = document.createElement("link");
-        v.rel = "preload";
-        v.href = url;
+            const v = document.createElement("link");
+            v.rel = "preload";
+            v.href = url;
 
-        if (type === "video") {
-            v.as = "video";
-        } else {
-            v.as = "image";
+            if (type === "video") {
+                v.as = "video";
+            } else {
+                v.as = "image";
+            }
+            document.head.appendChild(v);
         }
-        console.log(v);
-
-        document.head.appendChild(v);
     }
 
     get_media_type(url = this.playlist[this.index].url) {
@@ -249,19 +249,21 @@ class MMP4W {
     }
 
     set_event_listener() {
-        this.event_element.addEventListener("keydown", async (e) => {
-            if (
-                this.valid_events.has(e.key) &&
-                document.activeElement.tagName != "INPUT"
-            ) {
-                const event_description = this.valid_events.get(e.key);
-                event_description.handler_function(e);
-                this.give_feedback(e);
-            }
-        });
+        this.event_element.addEventListener("keydown", (e) => { this.handle_all_keydown_events(e) })
         this.video_element.addEventListener("ended", () => {
-            this.next({ctrlKey: false});
+            this.next({ ctrlKey: false });
         });
+    }
+
+    async handle_all_keydown_events(e) {
+        if (
+            this.valid_events.has(e.key) &&
+            document.activeElement.tagName != "INPUT"
+        ) {
+            const event_description = this.valid_events.get(e.key);
+            await event_description.handler_function(e);
+            this.give_feedback(e);
+        }
     }
 
     /**
