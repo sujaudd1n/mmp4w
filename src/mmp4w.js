@@ -1,29 +1,14 @@
 class MMP4W {
     constructor() {
         this.container = document.querySelector("#mmp4w_container");
-        this.video = document.querySelector("#mmp4w_video");
-        this.image = document.querySelector("#mmp4w_image") || undefined;
+        this.event_element = document.body;
+
 
         this.playlist = [];
 
         this.index = 0;
 
         this.SEEK_TIME = 5;
-
-        this.KEY_PLAY_PAUSE = "p";
-        this.STOP = "s";
-        this.MUTE = "m";
-        this.VOLUME_UP = "k";
-        this.VOLUME_DOWN = "j";
-        this.LOOP = "r";
-        this.SEEK_BEHIND = "h";
-        this.SEEK_FRONT = "l";
-        this.FULL_SCREEN = "f";
-        this.CHANGE_FIT = "o";
-        this.SHOW_INFO = "i";
-        this.SHOW_CONTROLS = "c";
-        this.NEXT = "l";
-        this.PREV = "h";
 
         /**
          * valid_event contains all the keys whose keydown event is
@@ -37,7 +22,7 @@ class MMP4W {
                 {
                     name: "p",
                     description: "Play or pause",
-                    handler_function: this.play_pause.bind(this),
+                    handler_function: (e) => { this.play_pause() },
                     feedback_function: this.play_pause_feedback.bind(this),
                 },
             ],
@@ -64,8 +49,8 @@ class MMP4W {
                 {
                     name: "h",
                     description: "Prev",
-                    handler_function: this.previous.bind(this),
-                    feedback_function: this.prev_feedback.bind(this),
+                    handler_function: this.h_key_event_hander.bind(this),
+                    feedback_function: this.h_key_feedback.bind(this),
                 },
             ],
             [
@@ -135,6 +120,11 @@ class MMP4W {
 
         this.layout_index = 0;
 
+    }
+
+    // Setup methods
+    setup_mmp4w() {
+        this.set_media_elements();
         this.set_container_style();
         this.set_video_style();
         this.set_image_style();
@@ -142,19 +132,19 @@ class MMP4W {
         this.set_others();
         this.set_feedback_element();
     }
+    set_media_elements() {
+        this.video_element = document.createElement("video");
+        this.video_element.setAttribute("id", "mmp4w_video")
+        this.container.appendChild(this.video_element);
+
+        this.image_element = document.createElement("img");
+        this.image_element.setAttribute("id", "mmp4w_image")
+        this.container.appendChild(this.image_element);
+    }
     set_feedback_element() {
         this.feedback_element = document.createElement("div");
         this.feedback_element.textContent = "feedback";
         this.feedback_element.classList.add("feedback_div");
-        this.feedback_element.style.background = "#222226";
-        this.feedback_element.style.color = "#eeeeee";
-        this.feedback_element.style.position = "absolute";
-        this.feedback_element.style.padding = "5px";
-        this.feedback_element.style.textAlign = "center";
-        this.feedback_element.style.top = "0";
-        this.feedback_element.style.left = "0";
-        this.feedback_element.style.right = "0";
-        this.feedback_element.style.opacity = "0";
         this.container.appendChild(this.feedback_element);
     }
 
@@ -163,25 +153,25 @@ class MMP4W {
         this.container.style.boxSizing = "border-box";
         this.container.style.position = "relative";
         this.container.setAttribute("tabindex", "0");
-        this.container.style.backgroundColor = "#222226";
+        this.container.style.backgroundColor = "#000";
         this.container.focus();
     }
 
     set_video_style() {
-        this.video.style.display = "block";
-        this.video.style.width = "100%";
-        this.video.style.height = "100%";
-        this.video.style.objectFit = "scale-down";
-        this.video.style.objectPosition = "center";
-        this.video.controls = true;
+        this.video_element.style.display = "block";
+        this.video_element.style.width = "100%";
+        this.video_element.style.height = "100%";
+        this.video_element.style.objectFit = "scale-down";
+        this.video_element.style.objectPosition = "center";
+        this.video_element.controls = true;
     }
 
     set_image_style() {
-        this.image.style.display = "none";
-        this.image.style.width = "100%";
-        this.image.style.height = "100%";
-        this.image.style.objectFit = "scale-down";
-        this.image.style.objectPosition = "center";
+        this.image_element.style.display = "none";
+        this.image_element.style.width = "100%";
+        this.image_element.style.height = "100%";
+        this.image_element.style.objectFit = "scale-down";
+        this.image_element.style.objectPosition = "center";
     }
 
     set_others() {
@@ -189,9 +179,9 @@ class MMP4W {
         document.adoptedStyleSheets = [styles];
     }
 
-    set_playlist(data) {
+    set_playlist(playlist) {
         this.index = 0;
-        this.playlist = data;
+        this.playlist = playlist;
         this.set_source();
     }
 
@@ -200,15 +190,15 @@ class MMP4W {
         const type = this.get_media_type(url);
 
         if (type === "video") {
-            this.image.style.display = "none";
-            this.video.style.display = "block";
-            this.video.src = url;
-            this.video.play();
+            this.image_element.style.display = "none";
+            this.video_element.style.display = "block";
+            this.video_element.src = url;
+            this.video_element.play();
         } else if (type === "image") {
-            this.video.style.display = "none";
-            this.video.pause();
-            this.image.style.display = "block";
-            this.image.src = url;
+            this.video_element.style.display = "none";
+            this.video_element.pause();
+            this.image_element.style.display = "block";
+            this.image_element.src = url;
         }
         console.log(document.activeElement);
         this.container.focus();
@@ -239,13 +229,13 @@ class MMP4W {
     }
 
     set_event_listener() {
-        document.body.addEventListener("keydown", async (e) => {
+        this.event_element.addEventListener("keydown", async (e) => {
             if (
                 this.valid_events.has(e.key) &&
                 document.activeElement.tagName != "INPUT"
             ) {
                 const event_description = this.valid_events.get(e.key);
-                await event_description.handler_function(e);
+                event_description.handler_function(e);
                 this.give_feedback(e);
             }
         });
@@ -254,21 +244,23 @@ class MMP4W {
     /**
      * Depending on what the user typed it gives a vasual feedback
      * to the uesr.
-     * @param {event} e Keydown event
+     * @param {e} Keydown event
      */
-    async give_feedback(e) {
-        const feedback_text = await this.valid_events
-            .get(e.key)
-            .feedback_function(e);
-        this.feedback_element.textContent = feedback_text;
-        ani.cancel();
-        ani.play();
+    give_feedback(e) {
+        if (this.valid_events.get(e.key).feedback_function) {
+            const feedback_text = this.valid_events
+                .get(e.key)
+                .feedback_function(e);
+            this.feedback_element.textContent = feedback_text;
+            ani.cancel();
+            ani.play();
+        }
     }
 
     stop(e) {
         if (e.ctrlKey) return;
-        this.video.pause();
-        this.video.currentTime = 0;
+        this.video_element.pause();
+        this.video_element.currentTime = 0;
     }
 
     stop_feedback(e) {
@@ -277,57 +269,59 @@ class MMP4W {
     }
 
     mute() {
-        this.video.muted = !this.video.muted;
+        this.video_element.muted = !this.video_element.muted;
     }
 
     mute_feedback() {
-        return this.video.muted ? "Muted: true" : "Muted: false";
+        return this.video_element.muted ? "Muted: true" : "Muted: false";
     }
 
-    loop() {
-        this.video.loop = !this.video.loop;
+    loop(e) {
+        if (!e.ctrlKey)
+            this.video_element.loop = !this.video_element.loop;
     }
 
-    loop_feedback() {
-        return this.video.loop ? "Loop: true" : "Loop: false";
+    loop_feedback(e) {
+        if (!e.ctrlKey)
+            return this.video_element.loop ? "Loop: true" : "Loop: false";
     }
 
     volume_down() {
-        this.video.volume = Math.max(0, this.video.volume - 0.1);
+        this.video_element.volume = Math.max(0, this.video_element.volume - 0.1);
     }
 
     volume_down_feedback() {
-        return Math.round(this.video.volume * 10);
+        return Math.round(this.video_element.volume * 10);
     }
 
     volume_up() {
-        this.video.volume = Math.min(1, this.video.volume + 0.1);
+        this.video_element.volume = Math.min(1, this.video_element.volume + 0.1);
     }
 
     volume_up_feedback() {
-        return Math.round(this.video.volume * 10);
+        return Math.round(this.video_element.volume * 10);
     }
 
     seek_behind() {
-        this.video.currentTime = Math.max(
+        this.video_element.currentTime = Math.max(
             0,
-            this.video.currentTime - this.SEEK_TIME
+            this.video_element.currentTime - this.SEEK_TIME
         );
     }
 
     seek_behind_feedback() {
-        return Math.round(this.video.currentTime);
+        return Math.round(this.video_element.currentTime);
     }
 
     seek_front() {
-        this.video.currentTime = Math.min(
-            this.video.duration,
-            this.video.currentTime + this.SEEK_TIME
+        this.video_element.currentTime = Math.min(
+            this.video_element.duration,
+            this.video_element.currentTime + this.SEEK_TIME
         );
     }
 
     seek_front_feedback() {
-        return Math.round(this.video.currentTime);
+        return Math.round(this.video_element.currentTime);
     }
 
     async full_screen() {
@@ -359,21 +353,21 @@ class MMP4W {
     }
 
     show_controls() {
-        this.video.controls = !this.video.controls;
+        this.video_element.controls = !this.video_element.controls;
     }
 
     show_controls_feedback() {
-        return this.video.controls ? "Controls: enabled" : "Controls: disabled";
+        return this.video_element.controls ? "Controls: enabled" : "Controls: disabled";
     }
 
-    play_pause() {
-        console.log(this.video);
-        if (this.video.ended || this.video.paused) this.video.play();
-        else this.video.pause();
+    play_pause(e, feedback) {
+        console.log(e, feedback)
+        if (this.video_element.ended || this.video_element.paused) this.video_element.play();
+        else this.video_element.pause();
     }
 
     play_pause_feedback() {
-        return this.video.paused ? "Paused" : "Playing";
+        return this.video_element.paused ? "Paused" : "Playing";
     }
 
     next(e) {
@@ -391,37 +385,54 @@ class MMP4W {
 
     next_feedback(e) {
         if (!e.ctrlKey) return "Next";
-        else return Math.round(this.video.currentTime);
+        else return Math.round(this.video_element.currentTime);
     }
 
-    previous(e) {
+    h_key_event_hander(e) {
         if (!e.ctrlKey) {
-            this.previous_playback();
+            this.previous_play();
         } else {
             e.preventDefault();
             this.seek_behind();
         }
     }
-    previous_playback() {
+
+    h_key_feedback(e) {
+        if (!e.ctrlKey) return this.previous_play_feedback();
+        else return this.seek_behind_feedback();
+    }
+
+    previous_play() {
         this.index - 1 > -1
             ? this.index--
             : (this.index = this.playlist.length - 1);
         this.set_source();
     }
 
-    prev_feedback() {
-        if (!e.ctrlKey) return "Previous";
-        else return Math.round(this.video.currentTime);
+    previous_play_feedback() {
+        return "Previous";
+    }
+
+    seek_behind() {
+        this.video_element.currentTime = Math.max(
+            0,
+            this.video_element.currentTime - this.SEEK_TIME
+        );
+    }
+
+    seek_behind_feedback() {
+        return Math.round(this.video_element.currentTime);
     }
 
     get_media_element() {
         const type = this.get_media_type();
-        if (type === "video") return this.video;
-        else return this.image;
+        if (type === "video") return this.video_element;
+        else return this.image_element;
     }
 }
 
 const mmp4w = new MMP4W();
+mmp4w.setup_mmp4w()
 
 const keyframe = new KeyframeEffect(
     mmp4w.feedback_element,
@@ -431,7 +442,24 @@ const keyframe = new KeyframeEffect(
         fill: "forwards",
     }
 );
-
 const ani = new Animation(keyframe, document.timeline);
+
+const feedback_element_style = new CSSStyleSheet();
+const feedback_element_style_string = [
+    "background: #222226",
+    "color: #eee",
+    "opacity: 0",
+    "text-align: center",
+    "padding: 5px",
+    "position: absolute",
+    "bottom: 40px",
+    "right: 10px",
+]
+feedback_element_style_string.forEach((e) => {
+    feedback_element_style.insertRule(`.feedback_div{${e}}`)
+})
+
+document.adoptedStyleSheets = [...document.adoptedStyleSheets, feedback_element_style]
+
 
 export { mmp4w };
