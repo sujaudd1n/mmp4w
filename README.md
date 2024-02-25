@@ -10,14 +10,10 @@ Minimalist media player for web. Control volume, current time, play-pause easily
 ## Setup
 
 -   Create a container element and set id as `mmp4w_container`.
--   Create a video element and set id as `mmp4w_video`.
--   Create a img element and set id as `mmp4w_image` (even if you won't be using images).
 
 ```html
-<figure id="mmp4w_container">
-    <video id="mmp4w_video"></video>
-    <img id="mmp4w_image" />
-</figure>
+<div id="mmp4w_container">
+</div>
 ```
 
 -   Set width and height for the container element. Video element takes full width
